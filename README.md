@@ -8,7 +8,6 @@ Welcome to the Drawing Tool website! This open source platform allows users to c
 - A color picker, which allows users to select and customize the colors they use in their artwork
 - A zoom function, which allows users to focus in on specific areas of their artwork for more detailed work
 - A selection of tools for editing and refining artwork, such as erasers, smudging tools, and blending tools
-- The ability to save and share your artwork with others
 
 ## How to Use
 
