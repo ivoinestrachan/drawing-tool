@@ -4,6 +4,7 @@ import { FaEraser, FaHighlighter, FaPen } from "react-icons/fa";
 const Kit = () => {
   const [currentDiv, setCurrentDiv] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [color, setColor] = useState("#000000");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -19,11 +20,17 @@ const Kit = () => {
         const draw = (e: MouseEvent) => {
           if (!isDrawing) return;
 
+          context.strokeStyle = color;
+          const target = e.target as HTMLElement;
           const { offsetX, offsetY } = e;
-          context.beginPath();
-          context.moveTo(lastX, lastY);
-          context.lineTo(offsetX, offsetY);
-          context.stroke();
+          if (currentDiv === "eraser" && target.id === "specific-div") {
+            context.clearRect(offsetX, offsetY, 10, 10);
+          } else {
+            context.beginPath();
+            context.moveTo(lastX, lastY);
+            context.lineTo(offsetX, offsetY);
+            context.stroke();
+          }
           [lastX, lastY] = [offsetX, offsetY];
         };
 
@@ -36,10 +43,15 @@ const Kit = () => {
         canvas.addEventListener("mouseout", () => (isDrawing = false));
       }
     }
-  }, [canvasRef]);
+  }, [canvasRef, currentDiv, color]);
 
   const handleDivChange = useCallback((div: string) => {
     setCurrentDiv(div);
+    const context = canvasRef.current?.getContext("2d");
+    if (context) {
+      context.globalCompositeOperation =
+        div === "highlighter" ? "destination-out" : "source-over";
+    }
   }, []);
 
   return (
@@ -63,7 +75,14 @@ const Kit = () => {
             className="cursor-pointer"
           />
           <div>
-            {currentDiv === "marker" && <div>Marker</div>}
+            {currentDiv === "marker" && (
+              <input
+                type="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="border-none rounded-sm"
+              />
+            )}
             {currentDiv === "highlighter" && <div>Highlighter</div>}
             {currentDiv === "eraser" && <div>Eraser</div>}
           </div>
